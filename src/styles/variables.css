@@ -1,0 +1,49 @@
+:root {
+  /* Neo-Brutalist Palette */
+  --color-bg: #f8f8f8;
+  /* Light Grey Background */
+  --color-surface: #ffffff;
+  /* White Cards */
+  --color-text: #000000;
+  --color-border: #000000;
+
+  /* Accents */
+  --color-primary: #FF5722;
+  /* Vibrant Orange */
+  --color-secondary: #5B6CFF;
+  /* Periwinkle Blue */
+  --color-accent: #FFEB3B;
+  /* Yellow */
+
+  /* Structural */
+  --border-thick: 3px solid var(--color-border);
+  --border-thin: 2px solid var(--color-border);
+  --shadow-hard: 4px 4px 0px 0px var(--color-border);
+  --shadow-hover: 6px 6px 0px 0px var(--color-border);
+  --radius-card: 0px;
+  /* Sharp corners or slight round depending on preference, sticking to 0 for pure brutalism or 8px for "Creative" */
+  --radius-pill: 999px;
+
+  /* Fonts */
+  --font-main: 'Space Grotesk', sans-serif;
+
+  /* Grid Pattern */
+  --grid-color: rgba(0, 0, 0, 0.1);
+}
+
+body.negative-mode {
+  --color-bg: #121212;
+  --color-surface: #000000;
+  --color-text: #ffffff;
+  --color-border: #ffffff;
+
+  /* Inverted Accents */
+  --color-primary: #00bcd4;
+  /* Cyan/Blue */
+  --color-secondary: #ff4081;
+  /* Pink */
+  --color-accent: #76ff03;
+  /* Lime Green */
+
+  --grid-color: rgba(255, 255, 255, 0.1);
+}
