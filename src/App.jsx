@@ -18,6 +18,11 @@ function App() {
 
   // Smooth Scroll Initialization
   React.useEffect(() => {
+    // Detect mobile by user agent or width to completely disable Lenis
+    const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent));
+
+    if (isMobile) return; // NATIVE SCROLL IS BEST FOR MOBILE
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing

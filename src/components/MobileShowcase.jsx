@@ -230,71 +230,68 @@ const MobileShowcase = () => {
                 </Reveal>
 
                 <div style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
-                    <Canvas
-                        dpr={dpr}
-                        camera={{ position: cameraPosition, fov: 45 }}
-                        frameloop={inViewport ? "always" : "never"} // CRITICAL OPTIMIZATION: Pause render when hidden
-                        gl={{ powerPreference: "high-performance", antialias: !isMobile }} // Disable AA on mobile for speed
-                    >
-                        <ambientLight intensity={0.7} />
-                        {/* FIXED: Disable dynamic shadow casting on mobile for performance */}
-                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow={!isMobile} />
-
-                        <Environment preset="city" />
-
-                        <PresentationControls
-                            {...rotationLimits}
-                            config={{ mass: 2, tension: 400 }}
-                            snap={{ mass: 4, tension: 400 }}
-                            cursor={false}
+                    {/* ACCESSIBILITY / PERFORMANCE: Only render WebGL when visible on screen */}
+                    {inViewport && (
+                        <Canvas
+                            dpr={dpr}
+                            camera={{ position: cameraPosition, fov: 45 }}
+                            gl={{ powerPreference: "high-performance", antialias: !isMobile }}
                         >
-                            <group position={[0, -0.5, 0]}>
-                                {/* GLOBAL CLICK CATCHER (Transparent Background Plane) */}
-                                <mesh
-                                    position={[0, 0, -1]}
-                                    onClick={() => setActiveIndex(1)} // Default to Center App (Repwise)
-                                >
-                                    <planeGeometry args={[100, 100]} />
-                                    <meshBasicMaterial transparent opacity={0} />
-                                </mesh>
+                            <ambientLight intensity={0.7} />
+                            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow={!isMobile} />
 
-                                {/* Center Phone - Repwise (Index 1) */}
-                                <AbstractPhone
-                                    position={[0, 0, 0]}
-                                    rotation={[0, 0, 0]}
-                                    imgUrl={APP_LIST[1].image}
-                                    onClick={() => setActiveIndex(1)}
-                                />
+                            <Environment preset="city" />
 
-                                {/* Left Phone - Doc (Index 0) */}
-                                <AbstractPhone
-                                    position={[-spacing, 0, -0.5]}
-                                    rotation={[0, 0.35, 0]}
-                                    scale={sideScale}
-                                    imgUrl={APP_LIST[0].image}
-                                    onClick={() => setActiveIndex(0)}
-                                />
+                            <PresentationControls
+                                {...rotationLimits}
+                                config={{ mass: 2, tension: 400 }}
+                                snap={{ mass: 4, tension: 400 }}
+                                cursor={false}
+                            >
+                                <group position={[0, -0.5, 0]}>
+                                    <mesh
+                                        position={[0, 0, -1]}
+                                        onClick={() => setActiveIndex(1)}
+                                    >
+                                        <planeGeometry args={[100, 100]} />
+                                        <meshBasicMaterial transparent opacity={0} />
+                                    </mesh>
 
-                                {/* Right Phone - Urban (Index 2) */}
-                                <AbstractPhone
-                                    position={[spacing, 0, -0.5]}
-                                    rotation={[0, -0.35, 0]}
-                                    scale={sideScale}
-                                    imgUrl={APP_LIST[2].image}
-                                    onClick={() => setActiveIndex(2)}
-                                />
-                            </group>
-                        </PresentationControls>
+                                    <AbstractPhone
+                                        position={[0, 0, 0]}
+                                        rotation={[0, 0, 0]}
+                                        imgUrl={APP_LIST[1].image}
+                                        onClick={() => setActiveIndex(1)}
+                                    />
 
-                        <ContactShadows
-                            position={[0, -1.8, 0]}
-                            opacity={0.4}
-                            scale={10}
-                            blur={2.5}
-                            far={4}
-                            frames={1} // Static shadows (bake once) for performance
-                        />
-                    </Canvas>
+                                    <AbstractPhone
+                                        position={[-spacing, 0, -0.5]}
+                                        rotation={[0, 0.35, 0]}
+                                        scale={sideScale}
+                                        imgUrl={APP_LIST[0].image}
+                                        onClick={() => setActiveIndex(0)}
+                                    />
+
+                                    <AbstractPhone
+                                        position={[spacing, 0, -0.5]}
+                                        rotation={[0, -0.35, 0]}
+                                        scale={sideScale}
+                                        imgUrl={APP_LIST[2].image}
+                                        onClick={() => setActiveIndex(2)}
+                                    />
+                                </group>
+                            </PresentationControls>
+
+                            <ContactShadows
+                                position={[0, -1.8, 0]}
+                                opacity={0.4}
+                                scale={10}
+                                blur={2.5}
+                                far={4}
+                                frames={1}
+                            />
+                        </Canvas>
+                    )}
                 </div>
 
                 <div style={{
