@@ -71,9 +71,11 @@ const PROJECTS = [
     }
 ];
 
+import ProjectModal from './ProjectModal';
+
 const Projects = () => {
     const [activeProject, setActiveProject] = useState(null); // For Desktop Hover
-    const [expandedProjectId, setExpandedProjectId] = useState(null); // For Click Slide-down
+    const [selectedProject, setSelectedProject] = useState(null); // For Modal Deep Dive
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
     const [isMobile, setIsMobile] = useState(false);
 
@@ -92,10 +94,6 @@ const Projects = () => {
             window.removeEventListener('mousemove', moveCursor);
         };
     }, []);
-
-    const toggleExpand = (id) => {
-        setExpandedProjectId(prev => prev === id ? null : id);
-    };
 
     return (
         <section id="projects" style={{ padding: '4rem 2rem', position: 'relative' }}>
@@ -128,125 +126,71 @@ const Projects = () => {
                 </div>
 
                 {PROJECTS.map((proj, index) => (
-                    <div key={proj.id} style={{ display: 'flex', flexDirection: 'column' }}>
-                        {/* Unified List Row for Desktop & Mobile */}
-                        <motion.div
-                            onMouseEnter={() => !isMobile && setActiveProject(proj)}
-                            onMouseLeave={() => !isMobile && setActiveProject(null)}
-                            onClick={() => toggleExpand(proj.id)}
-                            className="project-row"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
-                            style={{
-                                padding: '1.5rem 0',
-                                borderBottom: 'var(--border-thin)',
-                                cursor: 'pointer',
-                                display: 'grid',
-                                gridTemplateColumns: isMobile ? '30px 1fr' : '50px 1fr auto',
-                                alignItems: 'center',
-                                position: 'relative',
-                                background: (activeProject?.id === proj.id || expandedProjectId === proj.id) ? 'var(--color-text)' : 'transparent',
-                                color: (activeProject?.id === proj.id || expandedProjectId === proj.id) ? 'var(--color-bg)' : 'var(--color-text)',
-                                transition: 'all 0.1s ease',
-                                fontFamily: 'monospace'
-                            }}
-                        >
-                            <span style={{ opacity: 0.5 }}>0{index + 1}</span>
+                    <motion.div
+                        key={proj.id}
+                        layoutId={`project-card-${proj.id}`}
+                        onMouseEnter={() => !isMobile && setActiveProject(proj)}
+                        onMouseLeave={() => !isMobile && setActiveProject(null)}
+                        onClick={() => setSelectedProject(proj)}
+                        className="project-row"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.1 }}
+                        style={{
+                            padding: '1.5rem 0',
+                            borderBottom: 'var(--border-thin)',
+                            cursor: 'pointer',
+                            display: 'grid',
+                            gridTemplateColumns: isMobile ? '30px 1fr' : '50px 1fr auto',
+                            alignItems: 'center',
+                            position: 'relative',
+                            background: activeProject?.id === proj.id ? 'var(--color-text)' : 'transparent',
+                            color: activeProject?.id === proj.id ? 'var(--color-bg)' : 'var(--color-text)',
+                            transition: 'all 0.1s ease',
+                            fontFamily: 'monospace'
+                        }}
+                    >
+                        <span style={{ opacity: 0.5 }}>0{index + 1}</span>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <h3 style={{
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <motion.h3
+                                layoutId={`project-title-${proj.id}`}
+                                style={{
                                     fontSize: isMobile ? '1.2rem' : '2rem',
                                     fontWeight: '700',
                                     textTransform: 'uppercase',
                                     margin: 0,
                                     letterSpacing: '-1px',
                                     wordBreak: 'break-word'
-                                }}>
-                                    {(activeProject?.id === proj.id || expandedProjectId === proj.id) ? '> ' : ''}{proj.name}
-                                </h3>
+                                }}
+                            >
+                                {activeProject?.id === proj.id ? '> ' : ''}{proj.name}
+                            </motion.h3>
+                        </div>
+
+                        {!isMobile && (
+                            <div style={{ display: 'flex', gap: '1rem', opacity: 0.8, fontSize: '0.9rem' }}>
+                                {proj.tags.slice(0, 3).map((t, i) => <span key={i}>[{t}]</span>)}
                             </div>
-
-                            {!isMobile && (
-                                <div style={{ display: 'flex', gap: '1rem', opacity: 0.8, fontSize: '0.9rem' }}>
-                                    {proj.tags.slice(0, 3).map((t, i) => <span key={i}>[{t}]</span>)}
-                                </div>
-                            )}
-                        </motion.div>
-
-                        {/* Slide Down Details */}
-                        <AnimatePresence>
-                            {expandedProjectId === proj.id && (
-                                <motion.div
-                                    initial={{ height: 0, opacity: 0 }}
-                                    animate={{ height: 'auto', opacity: 1 }}
-                                    exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                                    style={{ overflow: 'hidden', background: 'var(--color-surface)' }}
-                                >
-                                    <div style={{
-                                        padding: '1.5rem',
-                                        borderBottom: 'var(--border-thin)',
-                                        display: 'flex',
-                                        flexDirection: 'column', // Changed to column to stack image
-                                        gap: '1rem'
-                                    }}>
-                                        {/* Desktop Slide Down Layout: Image + Text side by side? Or vertically? 
-                                    Let's do standard responsive: Text top, image bottom, or side-by-side on large screens if desired.
-                                    For simplicity and mobile-first, vertical stack is safe.
-                                */}
-                                        <div style={{
-                                            width: '100%',
-                                            height: '250px',
-                                            backgroundImage: `url(${proj.img})`,
-                                            backgroundSize: 'cover',
-                                            backgroundPosition: 'center',
-                                            border: 'var(--border-thick)',
-                                            marginBottom: '1rem'
-                                        }}></div>
-
-                                        <p style={{ fontSize: '1.1rem', lineHeight: '1.5', fontWeight: '500', margin: 0 }}>
-                                            {proj.desc}
-                                        </p>
-                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                                            {proj.tags.map(tag => (
-                                                <span key={tag} style={{
-                                                    background: 'var(--color-bg)',
-                                                    border: 'var(--border-thin)',
-                                                    padding: '0.2rem 0.5rem',
-                                                    fontSize: '0.8rem',
-                                                    fontWeight: 'bold'
-                                                }}>
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                        <a href={proj.links.repo} target="_blank" rel="noreferrer" style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '0.5rem',
-                                            fontWeight: 'bold',
-                                            textDecoration: 'underline',
-                                            marginTop: '0.5rem',
-                                            width: 'fit-content'
-                                        }}>
-                                            VIEW REPOSITORY <ArrowUpRight size={18} />
-                                        </a>
-                                    </div>
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
+                        )}
+                    </motion.div>
                 ))}
             </div>
 
+            {/* Deep Dive Modal */}
+            <AnimatePresence>
+                {selectedProject && (
+                    <ProjectModal selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
+                )}
+            </AnimatePresence>
+
             {/* Floating Preview Card (Desktop Only) */}
             <AnimatePresence>
-                {activeProject && !isMobile && (
+                {activeProject && !isMobile && !selectedProject && (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5, rotate: -5 }}
-                        animate={{ opacity: 1, scale: 1, rotate: 0, x: cursorPos.x + 40, y: cursorPos.y - 150 }} // Adjusted offset
+                        animate={{ opacity: 1, scale: 1, rotate: 0, x: cursorPos.x + 40, y: cursorPos.y - 150 }}
                         exit={{ opacity: 0, scale: 0.5, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 400, damping: 25 }}
                         style={{
@@ -267,8 +211,6 @@ const Projects = () => {
                                 flexDirection: 'column',
                                 position: 'relative'
                             }}>
-
-                                {/* Image Header */}
                                 <div style={{
                                     height: '180px',
                                     backgroundImage: `url(${activeProject.img})`,
@@ -291,8 +233,6 @@ const Projects = () => {
                                         {activeProject.id}
                                     </div>
                                 </div>
-
-                                {/* Card Body */}
                                 <div style={{ padding: '1.5rem', background: 'white' }}>
                                     <h3 style={{
                                         margin: '0 0 0.5rem 0',

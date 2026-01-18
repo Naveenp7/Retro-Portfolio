@@ -10,6 +10,7 @@ import Marquee from './components/Marquee';
 import Noise from './components/Noise';
 import ThemeToggle from './components/ThemeToggle';
 import ScrollProgress from './components/ScrollProgress';
+import MobileShowcase from './components/MobileShowcase';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <About />
         <Marquee text="FULL STACK AI ENGINEER • MOBILE APPS • FLUTTER DEV •" rotate={1} bgColor="var(--color-secondary)" />
         <Skills />
+        <MobileShowcase />
         <Projects />
         <Experience />
         <Contact />
