@@ -14,7 +14,7 @@ const Marquee = ({ text, bgColor = 'var(--color-primary)', textColor = 'white', 
             top: top,
             bottom: bottom,
             left: position === 'relative' ? '0' : '-2.5%', // Center if relative
-            zIndex: 2,
+            zIndex: 0,
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center', // Vertically center text

@@ -10,7 +10,7 @@ import Marquee from './components/Marquee';
 import ThemeToggle from './components/ThemeToggle';
 import ScrollProgress from './components/ScrollProgress';
 import MobileShowcase from './components/MobileShowcase';
-
+import Navbar from './components/Navbar';
 import Lenis from 'lenis';
 
 function App() {
@@ -42,6 +42,7 @@ function App() {
 
   return (
     <div className="app-container" style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
+      <Navbar />
       <ScrollProgress />
       <CustomCursor />
       <ThemeToggle />

@@ -26,7 +26,7 @@ const Hero = () => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            padding: '2rem',
+            padding: '6rem 2rem 2rem 2rem',
             position: 'relative',
             overflow: 'hidden'
         }}>

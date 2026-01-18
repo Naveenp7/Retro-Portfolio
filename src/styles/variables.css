@@ -29,6 +29,16 @@
 
   /* Grid Pattern */
   --grid-color: rgba(0, 0, 0, 0.1);
+
+  /* Dock Theme: Light Glass */
+  /* Dock Theme: Ultra-Lens Light */
+  --dock-bg: rgba(255, 255, 255, 0.15);
+  --dock-blur: blur(0px) saturate(400%) contrast(140%);
+  --dock-border: rgba(255, 255, 255, 0.9);
+  --dock-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.5),
+    inset 0 2px 0 rgba(255, 255, 255, 1.0);
 }
 
 body.negative-mode {
@@ -46,4 +56,15 @@ body.negative-mode {
   /* Lime Green */
 
   --grid-color: rgba(255, 255, 255, 0.1);
+
+  /* Dock Theme: Dark Glass */
+  /* Dock Theme: Ultra-Lens Dark */
+  --dock-bg: rgba(0, 0, 0, 0.4);
+  --dock-blur: blur(0px) saturate(300%) contrast(140%) brightness(130%);
+  --dock-border: rgba(255, 255, 255, 0.5);
+  --dock-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
 }
