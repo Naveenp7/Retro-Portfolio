@@ -7,7 +7,6 @@ import Experience from './components/Experience';
 import Contact from './components/Contact';
 import CustomCursor from './components/CustomCursor';
 import Marquee from './components/Marquee';
-import Noise from './components/Noise';
 import ThemeToggle from './components/ThemeToggle';
 import ScrollProgress from './components/ScrollProgress';
 import MobileShowcase from './components/MobileShowcase';
@@ -18,11 +17,6 @@ function App() {
 
   // Smooth Scroll Initialization
   React.useEffect(() => {
-    // Detect mobile by user agent or width to completely disable Lenis
-    const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent));
-
-    if (isMobile) return; // NATIVE SCROLL IS BEST FOR MOBILE
-
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
@@ -48,7 +42,6 @@ function App() {
 
   return (
     <div className="app-container" style={{ minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
-      <Noise />
       <ScrollProgress />
       <CustomCursor />
       <ThemeToggle />

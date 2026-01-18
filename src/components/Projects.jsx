@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Reveal from './Reveal';
-import TiltCard from './TiltCard';
 import GlitchText from './GlitchText';
 
 const PROJECTS = [
@@ -202,7 +201,7 @@ const Projects = () => {
                             zIndex: 100
                         }}
                     >
-                        <TiltCard>
+                        <div style={{ pointerEvents: 'none' }}>
                             <div className="hard-shadow" style={{
                                 background: 'var(--color-surface)',
                                 border: 'var(--border-thick)',
@@ -263,7 +262,7 @@ const Projects = () => {
                                     </div>
                                 </div>
                             </div>
-                        </TiltCard>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -55,77 +55,61 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
             onPointerOut={() => setHovered(false)}
         >
             {/* 0. INVISIBLE HITBOX (VISIBLE FOR RAYCAST, INVISIBLE TO EYE) */}
-            {/* Positioned slightly forward (z=0.2) to catch clicks before they hit HTML */}
-            <mesh position={[0, 0, 0.2]}>
-                <boxGeometry args={[1.4, 2.7, 0.5]} />
+            <mesh position={[0, 0, 0]} onClick={onClick}>
+                <planeGeometry args={[1.08, 2.28]} />
                 <meshBasicMaterial transparent opacity={0} />
             </mesh>
 
-            {/* 1. Main Housing (Metallic Frame) */}
-            <RoundedBox args={[1.2, 2.4, 0.1]} radius={0.12} smoothness={4}>
-                <meshStandardMaterial
-                    color={hovered ? "#444" : "#2a2a2a"}
-                    roughness={0.1}
-                    metalness={0.9}
-                />
-            </RoundedBox>
+            {/* 1. Only The Screen Content (HTML Overlay) */}
+            {/* We remove the backing 3D meshes (frame, glass, screen plane) */}
+            {/* to get a pure "floating display" look without glitchy z-fighting. */}
 
-            {/* 2. Front Glass (Glossy Bezel) */}
-            <RoundedBox args={[1.15, 2.35, 0.02]} position={[0, 0, 0.05]} radius={0.08} smoothness={4}>
-                <meshPhysicalMaterial
-                    color="#000000"
-                    roughness={0.0}
-                    metalness={0.2}
-                    clearcoat={1}
-                    clearcoatRoughness={0}
-                />
-            </RoundedBox>
-
-            {/* 3. Screen (Luminous & HTML Overlay) */}
-            {/* FIXED: Z-position moved to 0.07 to prevent z-fighting (flickering) with glass body */}
-            <mesh position={[0, 0, 0.07]}>
-                <planeGeometry args={[1.08, 2.28]} />
-                <meshBasicMaterial color="#000000" />
-
-                <Html
-                    transform
-                    scale={0.175}
-                    position={[0, 0, 0.01]}
-                    zIndexRange={[100, 0]}
-                    style={{
-                        pointerEvents: 'none'
-                    }}
-                >
-                    <div style={{
-                        width: '300px',
-                        height: '620px',
-                        background: 'black',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        borderRadius: '24px',
-                        backfaceVisibility: 'hidden',
-                        pointerEvents: 'none',
-                        userSelect: 'none'
-                    }}>
-                        {imgUrl ? (
-                            <img
-                                src={imgUrl}
-                                alt="preview"
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    display: 'block'
-                                }}
-                            />
-                        ) : (
-                            <div style={{ color: '#333', fontFamily: 'sans-serif', fontSize: '12px' }}>LOADING</div>
-                        )}
-                    </div>
-                </Html>
-            </mesh>
+            <Html
+                transform
+                scale={0.175}
+                position={[0, 0, 0]}
+                zIndexRange={[100, 0]}
+                style={{
+                    pointerEvents: 'none',
+                    // Add hardware acceleration to help with rendering
+                    transform: 'translate3d(0,0,0)'
+                }}
+            >
+                <div style={{
+                    width: '300px',
+                    height: '620px',
+                    background: 'black',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    borderRadius: '35px', // Increased radius for better "phone" shape
+                    border: '8px solid #222', // Faux bezel
+                    boxShadow: hovered
+                        ? '0 0 30px rgba(255, 255, 255, 0.2)'
+                        : '0 10px 30px rgba(0,0,0,0.5)',
+                    transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
+                    backfaceVisibility: 'hidden',
+                    pointerEvents: 'none',
+                    userSelect: 'none'
+                }}>
+                    {imgUrl ? (
+                        <img
+                            src={imgUrl}
+                            alt="preview"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                display: 'block',
+                                borderRadius: '25px' // Inner radius to match bezel
+                            }}
+                        />
+                    ) : (
+                        <div style={{ color: '#333', fontFamily: 'sans-serif', fontSize: '12px' }}>LOADING</div>
+                    )}
+                </div>
+            </Html>
         </group>
     );
 };
@@ -133,37 +117,12 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
 const MobileShowcase = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [activeIndex, setActiveIndex] = useState(null);
-    const containerRef = useRef(null);
-    const isInView = React.useMemo(() => {
-        // Simplified view tracking without extra dependencies
-        // We'll use a standard intersection observer in a useEffect if not importing useInView
-        return true;
-    }, []);
-
-    // Using State for intersection to trigger re-renders of the logic
-    const [inViewport, setInViewport] = useState(true);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
         window.addEventListener('resize', checkMobile);
-
-        // Intersection Observer to pause Three.js when out of view
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                setInViewport(entry.isIntersecting);
-            },
-            { threshold: 0.1 } // Start rendering when 10% visible
-        );
-
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
-        }
-
-        return () => {
-            window.removeEventListener('resize', checkMobile);
-            observer.disconnect();
-        };
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     const cameraPosition = isMobile ? [0, 0, 9] : [0, 0, 6.5];
@@ -175,12 +134,9 @@ const MobileShowcase = () => {
         ? { global: false, polar: [0, 0], azimuth: [-0.2, 0.2] }
         : { global: false, polar: [-0.4, 0.2], azimuth: [-1, 1] };
 
-    // Optimize DPR for mobile to prevent GPU overload (Brightness flickering)
-    const dpr = isMobile ? 1 : [1, 2];
-
     return (
         <>
-            <section ref={containerRef} style={{ height: '700px', position: 'relative', overflow: 'hidden', paddingTop: '4rem', background: 'transparent' }}>
+            <section style={{ height: '700px', position: 'relative', overflow: 'hidden', paddingTop: '4rem', background: 'transparent' }}>
                 <div style={{
                     position: 'absolute',
                     top: '50%',
@@ -230,68 +186,64 @@ const MobileShowcase = () => {
                 </Reveal>
 
                 <div style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
-                    {/* ACCESSIBILITY / PERFORMANCE: Only render WebGL when visible on screen */}
-                    {inViewport && (
-                        <Canvas
-                            dpr={dpr}
-                            camera={{ position: cameraPosition, fov: 45 }}
-                            gl={{ powerPreference: "high-performance", antialias: !isMobile }}
+                    <Canvas dpr={[1, 2]} camera={{ position: cameraPosition, fov: 45 }}>
+                        <ambientLight intensity={0.7} />
+                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+
+                        <Environment preset="city" />
+
+                        <PresentationControls
+                            {...rotationLimits}
+                            config={{ mass: 2, tension: 400 }}
+                            snap={{ mass: 4, tension: 400 }}
+                            cursor={false}
                         >
-                            <ambientLight intensity={0.7} />
-                            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow={!isMobile} />
+                            <group position={[0, -0.5, 0]}>
+                                {/* GLOBAL CLICK CATCHER (Transparent Background Plane) */}
+                                <mesh
+                                    position={[0, 0, -1]}
+                                    onClick={() => setActiveIndex(1)} // Default to Center App (Repwise)
+                                >
+                                    <planeGeometry args={[100, 100]} />
+                                    <meshBasicMaterial transparent opacity={0} />
+                                </mesh>
 
-                            <Environment preset="city" />
+                                {/* Center Phone - Repwise (Index 1) */}
+                                <AbstractPhone
+                                    position={[0, 0, 0]}
+                                    rotation={[0, 0, 0]}
+                                    imgUrl={APP_LIST[1].image}
+                                    onClick={() => setActiveIndex(1)}
+                                />
 
-                            <PresentationControls
-                                {...rotationLimits}
-                                config={{ mass: 2, tension: 400 }}
-                                snap={{ mass: 4, tension: 400 }}
-                                cursor={false}
-                            >
-                                <group position={[0, -0.5, 0]}>
-                                    <mesh
-                                        position={[0, 0, -1]}
-                                        onClick={() => setActiveIndex(1)}
-                                    >
-                                        <planeGeometry args={[100, 100]} />
-                                        <meshBasicMaterial transparent opacity={0} />
-                                    </mesh>
+                                {/* Left Phone - Doc (Index 0) */}
+                                <AbstractPhone
+                                    position={[-spacing, 0, -0.5]}
+                                    rotation={[0, 0.35, 0]}
+                                    scale={sideScale}
+                                    imgUrl={APP_LIST[0].image}
+                                    onClick={() => setActiveIndex(0)}
+                                />
 
-                                    <AbstractPhone
-                                        position={[0, 0, 0]}
-                                        rotation={[0, 0, 0]}
-                                        imgUrl={APP_LIST[1].image}
-                                        onClick={() => setActiveIndex(1)}
-                                    />
+                                {/* Right Phone - Urban (Index 2) */}
+                                <AbstractPhone
+                                    position={[spacing, 0, -0.5]}
+                                    rotation={[0, -0.35, 0]}
+                                    scale={sideScale}
+                                    imgUrl={APP_LIST[2].image}
+                                    onClick={() => setActiveIndex(2)}
+                                />
+                            </group>
+                        </PresentationControls>
 
-                                    <AbstractPhone
-                                        position={[-spacing, 0, -0.5]}
-                                        rotation={[0, 0.35, 0]}
-                                        scale={sideScale}
-                                        imgUrl={APP_LIST[0].image}
-                                        onClick={() => setActiveIndex(0)}
-                                    />
-
-                                    <AbstractPhone
-                                        position={[spacing, 0, -0.5]}
-                                        rotation={[0, -0.35, 0]}
-                                        scale={sideScale}
-                                        imgUrl={APP_LIST[2].image}
-                                        onClick={() => setActiveIndex(2)}
-                                    />
-                                </group>
-                            </PresentationControls>
-
-                            <ContactShadows
-                                position={[0, -1.8, 0]}
-                                opacity={0.4}
-                                scale={10}
-                                blur={2.5}
-                                far={4}
-                                frames={1}
-                            />
-                        </Canvas>
-                    )}
+                        <ContactShadows
+                            position={[0, -2.5, 0]}
+                            opacity={0.7}
+                            scale={20}
+                            blur={2}
+                            far={4.5}
+                        />
+                    </Canvas>
                 </div>
 
                 <div style={{
