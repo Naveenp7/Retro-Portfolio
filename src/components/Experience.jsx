@@ -139,9 +139,9 @@ const Experience = () => {
                             <AnimatePresence mode='wait'>
                                 <motion.div
                                     key={activeId}
-                                    initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-                                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                                    exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 1.05 }}
                                     transition={{ duration: 0.4 }}
                                     style={{
                                         width: '100%',

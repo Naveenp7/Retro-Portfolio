@@ -82,7 +82,8 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
             </RoundedBox>
 
             {/* 3. Screen (Luminous & HTML Overlay) */}
-            <mesh position={[0, 0, 0.061]}>
+            {/* FIXED: Z-position moved to 0.07 to prevent z-fighting (flickering) with glass body */}
+            <mesh position={[0, 0, 0.07]}>
                 <planeGeometry args={[1.08, 2.28]} />
                 <meshBasicMaterial color="#000000" />
 
@@ -236,7 +237,8 @@ const MobileShowcase = () => {
                         gl={{ powerPreference: "high-performance", antialias: !isMobile }} // Disable AA on mobile for speed
                     >
                         <ambientLight intensity={0.7} />
-                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+                        {/* FIXED: Disable dynamic shadow casting on mobile for performance */}
+                        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow={!isMobile} />
 
                         <Environment preset="city" />
 
