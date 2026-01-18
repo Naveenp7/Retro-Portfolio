@@ -83,10 +83,10 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                 flexDirection: isMobile ? 'column' : 'row',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: isMobile ? '2rem' : '4rem',
+                gap: isMobile ? '1.5rem' : '4rem',
                 maxWidth: '1200px',
                 width: '100%',
-                padding: isMobile ? '4rem 1rem 2rem 1rem' : '2rem',
+                padding: isMobile ? '3rem 1rem 8rem 1rem' : '2rem', /* EXTRA BOTTOM PADDING FOR MOBILE */
                 minHeight: '100%'
             }}>
 
@@ -99,16 +99,16 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}>
-                    {/* Navigation Arrows (Mobile: Float on sides, Desktop: Outside) */}
+                    {/* Navigation Arrows (Mobile: High Contrast Dark Buttons) */}
                     {isMobile && (
                         <>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onNavigate((activeIndex - 1 + apps.length) % apps.length); }}
                                 style={{
-                                    position: 'absolute', left: '-1rem', top: '50%', transform: 'translateY(-50%)',
-                                    background: 'rgba(255,255,255,0.9)', borderRadius: '50%',
-                                    width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    border: 'none', zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.3)', color: 'black'
+                                    position: 'absolute', left: '-1.2rem', top: '50%', transform: 'translateY(-50%)',
+                                    background: '#0a0a0a', borderRadius: '50%', /* Dark background for contrast */
+                                    width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    border: '1px solid #333', zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.5)', color: 'white'
                                 }}
                             >
                                 <ChevronLeft size={24} />
@@ -116,10 +116,10 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                             <button
                                 onClick={(e) => { e.stopPropagation(); onNavigate((activeIndex + 1) % apps.length); }}
                                 style={{
-                                    position: 'absolute', right: '-1rem', top: '50%', transform: 'translateY(-50%)',
-                                    background: 'rgba(255,255,255,0.9)', borderRadius: '50%',
-                                    width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    border: 'none', zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.3)', color: 'black'
+                                    position: 'absolute', right: '-1.2rem', top: '50%', transform: 'translateY(-50%)',
+                                    background: '#0a0a0a', borderRadius: '50%', /* Dark background for contrast */
+                                    width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    border: '1px solid #333', zIndex: 20, boxShadow: '0 4px 12px rgba(0,0,0,0.5)', color: 'white'
                                 }}
                             >
                                 <ChevronRight size={24} />
@@ -135,9 +135,9 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                             animate="center"
                             exit="exit"
                             style={{
-                                width: isMobile ? '75vw' : '320px',
+                                width: isMobile ? '70vw' : '320px', /* Reduced width to prevent crowding */
                                 maxWidth: '320px',
-                                aspectRatio: '9/19.5', /* Maintain iPhone Aspect Ratio */
+                                aspectRatio: '9/19.5',
                                 height: 'auto',
                                 border: '4px solid #333',
                                 borderRadius: isMobile ? '30px' : '40px',
@@ -170,8 +170,8 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                     color: 'white',
                     maxWidth: '600px',
                     width: '100%',
-                    textAlign: isMobile ? 'center' : 'left',
-                    paddingBottom: isMobile ? '4rem' : '0'
+                    textAlign: isMobile ? 'left' : 'left', /* Left align for readability */
+                    paddingBottom: isMobile ? '2rem' : '0'
                 }}>
                     <AnimatePresence mode='wait'>
                         <motion.div
@@ -186,6 +186,7 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                                 fontWeight: '900',
                                 marginBottom: '1rem',
                                 lineHeight: 1.1,
+                                textAlign: 'center', /* Title stays centered */
                                 marginTop: isMobile ? '0' : '0'
                             }}>
                                 {app.title}
@@ -196,7 +197,7 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                                 gap: '0.6rem',
                                 flexWrap: 'wrap',
                                 marginBottom: '2rem',
-                                justifyContent: isMobile ? 'center' : 'flex-start'
+                                justifyContent: 'center' /* Tags stay centered */
                             }}>
                                 {app.tags.map(tag => (
                                     <span key={tag} style={{
@@ -213,7 +214,7 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                                 ))}
                             </div>
 
-                            <div style={{ marginBottom: '2rem' }}>
+                            <div style={{ marginBottom: '2rem', padding: isMobile ? '0 1rem' : '0' }}>
                                 <h3 style={{ color: 'var(--color-primary)', fontSize: '0.9rem', marginBottom: '0.5rem', letterSpacing: '1px' }}>THE CHALLENGE</h3>
                                 <p style={{ lineHeight: '1.6', opacity: 0.8, marginBottom: '1.5rem', fontSize: isMobile ? '0.95rem' : '1rem' }}>
                                     {app.details.challenge}
@@ -229,7 +230,7 @@ const AppStoryModal = ({ activeIndex, apps, onClose, onNavigate }) => {
                             <div style={{
                                 display: 'flex',
                                 gap: '1rem',
-                                justifyContent: isMobile ? 'center' : 'flex-start'
+                                justifyContent: 'center'
                             }}>
                                 <MagneticButton href="#" style={{
                                     padding: '0.8rem 1.6rem', background: 'white', color: 'black', fontWeight: 'bold',
