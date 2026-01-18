@@ -31,8 +31,10 @@ const Contact = () => {
                     </Reveal>
 
                     <nav style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                        <MagneticButton>
-                            <a href="mailto:naveensanthosh830@gmail.com" className="hard-shadow" style={{
+                        <MagneticButton
+                            href="mailto:naveensanthosh830@gmail.com"
+                            className="hard-shadow"
+                            style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -43,15 +45,18 @@ const Contact = () => {
                                 fontWeight: 'bold',
                                 textDecoration: 'none',
                                 color: 'black',
-                                transition: 'all 0.2s'
-                            }}>
-                                <span>EMAIL ME</span>
-                                <ArrowUpRight size={32} />
-                            </a>
+                                transition: 'all 0.2s',
+                                width: '100%'
+                            }}
+                        >
+                            <span>EMAIL ME</span>
+                            <ArrowUpRight size={32} />
                         </MagneticButton>
 
-                        <MagneticButton>
-                            <a href="tel:+917012895181" className="hard-shadow" style={{
+                        <MagneticButton
+                            href="tel:+917012895181"
+                            className="hard-shadow"
+                            style={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
@@ -61,11 +66,12 @@ const Contact = () => {
                                 fontSize: '1.5rem',
                                 fontWeight: 'bold',
                                 textDecoration: 'none',
-                                color: 'black'
-                            }}>
-                                <span>CALL ME</span>
-                                <Phone size={32} />
-                            </a>
+                                color: 'black',
+                                width: '100%'
+                            }}
+                        >
+                            <span>CALL ME</span>
+                            <Phone size={32} />
                         </MagneticButton>
 
                         <div className="hard-shadow" style={{
@@ -141,8 +147,9 @@ const Contact = () => {
                                 }}
                             />
                         </div>
-                        <MagneticButton>
-                            <button type="submit" style={{
+                        <MagneticButton
+                            type="submit"
+                            style={{
                                 width: '100%',
                                 background: 'black',
                                 color: 'white',
@@ -156,9 +163,9 @@ const Contact = () => {
                                 justifyContent: 'center',
                                 gap: '0.5rem',
                                 textTransform: 'uppercase'
-                            }}>
-                                SEND IT <Send size={20} />
-                            </button>
+                            }}
+                        >
+                            SEND IT <Send size={20} />
                         </MagneticButton>
                     </form>
                 </div>

@@ -132,12 +132,37 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
 const MobileShowcase = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [activeIndex, setActiveIndex] = useState(null);
+    const containerRef = useRef(null);
+    const isInView = React.useMemo(() => {
+        // Simplified view tracking without extra dependencies
+        // We'll use a standard intersection observer in a useEffect if not importing useInView
+        return true;
+    }, []);
+
+    // Using State for intersection to trigger re-renders of the logic
+    const [inViewport, setInViewport] = useState(true);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
         window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+
+        // Intersection Observer to pause Three.js when out of view
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setInViewport(entry.isIntersecting);
+            },
+            { threshold: 0.1 } // Start rendering when 10% visible
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        return () => {
+            window.removeEventListener('resize', checkMobile);
+            observer.disconnect();
+        };
     }, []);
 
     const cameraPosition = isMobile ? [0, 0, 9] : [0, 0, 6.5];
@@ -149,9 +174,12 @@ const MobileShowcase = () => {
         ? { global: false, polar: [0, 0], azimuth: [-0.2, 0.2] }
         : { global: false, polar: [-0.4, 0.2], azimuth: [-1, 1] };
 
+    // Optimize DPR for mobile to prevent GPU overload (Brightness flickering)
+    const dpr = isMobile ? 1 : [1, 2];
+
     return (
         <>
-            <section style={{ height: '700px', position: 'relative', overflow: 'hidden', paddingTop: '4rem', background: 'transparent' }}>
+            <section ref={containerRef} style={{ height: '700px', position: 'relative', overflow: 'hidden', paddingTop: '4rem', background: 'transparent' }}>
                 <div style={{
                     position: 'absolute',
                     top: '50%',
@@ -201,7 +229,12 @@ const MobileShowcase = () => {
                 </Reveal>
 
                 <div style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
-                    <Canvas dpr={[1, 2]} camera={{ position: cameraPosition, fov: 45 }}>
+                    <Canvas
+                        dpr={dpr}
+                        camera={{ position: cameraPosition, fov: 45 }}
+                        frameloop={inViewport ? "always" : "never"} // CRITICAL OPTIMIZATION: Pause render when hidden
+                        gl={{ powerPreference: "high-performance", antialias: !isMobile }} // Disable AA on mobile for speed
+                    >
                         <ambientLight intensity={0.7} />
                         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
 
@@ -257,6 +290,7 @@ const MobileShowcase = () => {
                             scale={10}
                             blur={2.5}
                             far={4}
+                            frames={1} // Static shadows (bake once) for performance
                         />
                     </Canvas>
                 </div>

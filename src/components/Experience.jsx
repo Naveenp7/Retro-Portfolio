@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import GlitchText from './GlitchText';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LOGS = [
     {
+        id: 0,
         date: "JULY 2025",
         role: "3RD PRIZE",
         company: "KOTEC H TECH FEST",
@@ -11,6 +11,7 @@ const LOGS = [
         imgs: ["/prize/kotech1.jpg", "/prize/kotech2.jpg", "/prize/kotech3.jpg"]
     },
     {
+        id: 1,
         date: "2025",
         role: "2ND PRIZE",
         company: "MATRIX HACKATHON",
@@ -19,6 +20,7 @@ const LOGS = [
         imgs: ["/prize/aventron1.jpg", "/prize/aventron2.jpg"]
     },
     {
+        id: 2,
         date: "WORKSHOP",
         role: "MENTOR",
         company: "ADTEC VIBE CODING",
@@ -28,28 +30,30 @@ const LOGS = [
 ];
 
 const Experience = () => {
+    const [activeId, setActiveId] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        const checkMobile = () => setIsMobile(window.innerWidth < 900);
         checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        const handleResize = () => checkMobile();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
-        <section id="experience" style={{ padding: '6rem 2rem', position: 'relative' }}>
-            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        <section id="experience" style={{ padding: '6rem 2rem', position: 'relative', minHeight: '100vh' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
                 {/* HEADLINE */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    style={{ marginBottom: '4rem', textAlign: 'left' }}
+                    style={{ marginBottom: '5rem' }}
                 >
                     <h2 style={{
-                        fontSize: isMobile ? '2.5rem' : '3.5rem',
+                        fontSize: isMobile ? '2.5rem' : '4rem',
                         fontWeight: '900',
                         textTransform: 'uppercase',
                         lineHeight: 0.9,
@@ -57,147 +61,123 @@ const Experience = () => {
                         marginBottom: '1rem'
                     }}>
                         JOURNEY & <br />
-                        <span style={{ color: 'var(--color-primary)', display: 'inline-block' }}>
-                            ACHIEVEMENTS
-                        </span>
+                        <span style={{ color: 'var(--color-primary)' }}>ACHIEVEMENTS</span>
                     </h2>
-                    <div style={{ width: '60px', height: '6px', background: 'var(--color-text)' }} />
                 </motion.div>
 
-                {/* TIMELINE CONTAINER */}
-                <div style={{ position: 'relative', borderLeft: isMobile ? '2px solid rgba(255,255,255,0.1)' : 'none' }}>
-
-                    {/* (Desktop) Central Spine Line */}
-                    {!isMobile && (
-                        <div style={{
-                            position: 'absolute',
-                            left: '50%',
-                            top: 0,
-                            bottom: 0,
-                            width: '2px',
-                            background: 'rgba(255,255,255,0.1)',
-                            transform: 'translateX(-50%)'
-                        }} />
-                    )}
-
-                    {LOGS.map((log, index) => {
-                        const isEven = index % 2 === 0;
-                        return (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true, margin: "-100px" }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: isMobile ? 'column' : (isEven ? 'row' : 'row-reverse'),
-                                    alignItems: 'center',
-                                    marginBottom: '4rem',
-                                    position: 'relative'
-                                }}
-                            >
-                                {/* 1. DATE / MARKER SIDE */}
+                {isMobile ? (
+                    // MOBILE LAYOUT: Vertical Stack
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+                        {LOGS.map((log) => (
+                            <div key={log.id} style={{ borderLeft: '2px solid var(--color-primary)', paddingLeft: '1.5rem' }}>
                                 <div style={{
-                                    flex: 1,
-                                    padding: isMobile ? '0 0 1rem 1.5rem' : (isEven ? '0 3rem 0 0' : '0 0 0 3rem'),
-                                    textAlign: isMobile ? 'left' : (isEven ? 'right' : 'left'),
-                                    position: 'relative',
-                                    width: '100%'
+                                    fontFamily: 'monospace', color: 'var(--color-primary)',
+                                    fontWeight: 'bold', marginBottom: '0.5rem'
                                 }}>
-                                    {/* Mobile Dot */}
-                                    {isMobile && (
-                                        <div style={{
-                                            position: 'absolute', left: '-5px', top: '5px',
-                                            width: '12px', height: '12px', background: 'var(--color-primary)',
-                                            borderRadius: '50%', border: '2px solid black'
-                                        }} />
-                                    )}
+                                    {log.date}
+                                </div>
+                                <h3 style={{ fontSize: '2rem', fontWeight: '800', margin: '0 0 0.5rem 0', lineHeight: 1 }}>{log.role}</h3>
+                                <div style={{ fontSize: '1rem', opacity: 0.7, marginBottom: '1rem' }}>{log.company}</div>
+                                <p style={{ opacity: 0.8, lineHeight: 1.6, marginBottom: '1.5rem' }}>{log.desc}</p>
 
+                                {/* Mobile Image (Static) */}
+                                {log.imgs && (
+                                    <div style={{ aspectRatio: '16/9', background: '#111', overflow: 'hidden', borderRadius: '4px' }}>
+                                        <img src={log.imgs[0]} alt="evidence" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    // DESKTOP LAYOUT: Split Screen Spotlight
+                    <div style={{ display: 'flex', gap: '5rem', alignItems: 'flex-start' }}>
+
+                        {/* LEFT: Text List */}
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                            {LOGS.map((log) => (
+                                <div
+                                    key={log.id}
+                                    onMouseEnter={() => setActiveId(log.id)}
+                                    style={{
+                                        padding: '2rem',
+                                        cursor: 'pointer',
+                                        border: activeId === log.id ? '2px solid var(--color-primary)' : '2px solid transparent',
+                                        background: activeId === log.id ? 'rgba(255,255,255,0.03)' : 'transparent',
+                                        opacity: activeId === log.id ? 1 : 0.4,
+                                        transition: 'all 0.3s ease',
+                                        transform: activeId === log.id ? 'translateX(20px)' : 'translateX(0)'
+                                    }}
+                                >
                                     <div style={{
-                                        fontFamily: 'monospace',
-                                        color: 'var(--color-primary)',
-                                        fontWeight: 'bold',
-                                        fontSize: '0.9rem',
-                                        letterSpacing: '1px',
-                                        marginBottom: '0.5rem'
+                                        fontFamily: 'monospace', color: 'var(--color-primary)',
+                                        fontWeight: 'bold', marginBottom: '0.5rem'
                                     }}>
                                         {log.date}
                                     </div>
-                                    <h3 style={{
-                                        fontSize: '1.8rem',
-                                        fontWeight: '800',
-                                        lineHeight: 1,
-                                        textTransform: 'uppercase',
-                                        margin: 0
-                                    }}>
-                                        {log.role}
-                                    </h3>
-                                    <div style={{ fontSize: '1.2rem', fontWeight: 'bold', opacity: 0.7 }}>
-                                        {log.company} {log.sub && <span>{log.sub}</span>}
+                                    <h3 style={{ fontSize: '2.5rem', fontWeight: '800', margin: '0 0 0.5rem 0', lineHeight: 1 }}>{log.role}</h3>
+                                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '1rem' }}>
+                                        {log.company} {log.sub}
                                     </div>
+                                    <p style={{ margin: 0, opacity: 0.8, lineHeight: 1.6, maxWidth: '90%' }}>
+                                        {log.desc}
+                                    </p>
                                 </div>
+                            ))}
+                        </div>
 
-                                {/* 2. CENTRAL NODE (Desktop Only) */}
-                                {!isMobile && (
-                                    <div style={{
-                                        width: '20px', height: '20px',
-                                        background: 'black',
-                                        border: '4px solid var(--color-primary)',
-                                        borderRadius: '50%',
-                                        zIndex: 2,
-                                        boxShadow: '0 0 20px var(--color-primary)'
-                                    }} />
-                                )}
+                        {/* RIGHT: Sticky Preview Box */}
+                        <div style={{
+                            flex: 1,
+                            height: '500px',
+                            position: 'sticky',
+                            top: '20vh',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}>
+                            <AnimatePresence mode='wait'>
+                                <motion.div
+                                    key={activeId}
+                                    initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+                                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                                    exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+                                    transition={{ duration: 0.4 }}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        background: '#000',
+                                        border: '1px solid rgba(255,255,255,0.2)',
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+                                    }}
+                                >
+                                    {/* Main Image */}
+                                    {LOGS[activeId].imgs && (
+                                        <img
+                                            src={LOGS[activeId].imgs[0]}
+                                            alt="Preview"
+                                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                        />
+                                    )}
 
-                                {/* 3. CONTENT / GALLERY SIDE */}
-                                <div style={{
-                                    flex: 1,
-                                    padding: isMobile ? '0 0 0 1.5rem' : (isEven ? '0 0 0 3rem' : '0 3rem 0 0'),
-                                    width: '100%'
-                                }}>
+                                    {/* Overlay Text */}
                                     <div style={{
-                                        background: 'rgba(255,255,255,0.03)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        position: 'absolute', bottom: 0, left: 0, right: 0,
                                         padding: '1.5rem',
-                                        borderRadius: '0px'
+                                        background: 'linear-gradient(to top, black, transparent)',
+                                        color: 'white',
+                                        fontFamily: 'monospace',
+                                        fontSize: '0.9rem'
                                     }}>
-                                        <p style={{ margin: '0 0 1.5rem 0', opacity: 0.8, lineHeight: 1.6 }}>
-                                            {log.desc}
-                                        </p>
-
-                                        {/* Gallery - Optimized Static Grid with Native Loading */}
-                                        {log.imgs && (
-                                            <div style={{
-                                                display: 'grid',
-                                                gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))',
-                                                gap: '0.5rem',
-                                                marginTop: '1.5rem'
-                                            }}>
-                                                {log.imgs.map((img, i) => (
-                                                    <img
-                                                        key={i}
-                                                        src={img}
-                                                        alt={`Evidence ${i + 1}`}
-                                                        loading="lazy"
-                                                        style={{
-                                                            width: '100%',
-                                                            height: '80px',
-                                                            objectFit: 'cover',
-                                                            background: '#222',
-                                                            border: '1px solid rgba(255,255,255,0.2)',
-                                                            display: 'block'
-                                                        }}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
+                                        // EVIDENCE_RECORD_{activeId + 1}
                                     </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const MagneticButton = ({ children, onClick, href, className, style, title, target, rel }) => {
+const MagneticButton = ({ children, onClick, href, className, style, title, target, rel, ...rest }) => {
     const ref = useRef(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -35,6 +35,7 @@ const MagneticButton = ({ children, onClick, href, className, style, title, targ
             className={className}
             title={title}
             style={style}
+            {...rest}
         >
             {children}
         </MotionComponent>
