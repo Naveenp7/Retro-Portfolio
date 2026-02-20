@@ -70,9 +70,7 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
                 position={[0, 0, 0]}
                 zIndexRange={[100, 0]}
                 style={{
-                    pointerEvents: 'none',
-                    // Add hardware acceleration to help with rendering
-                    transform: 'translate3d(0,0,0)'
+                    pointerEvents: 'none'
                 }}
             >
                 <div style={{
@@ -89,9 +87,9 @@ const AbstractPhone = ({ position, rotation, imgUrl, scale = 1, onClick }) => {
                         ? '0 0 30px rgba(255, 255, 255, 0.2)'
                         : '0 10px 30px rgba(0,0,0,0.5)',
                     transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
-                    backfaceVisibility: 'hidden',
                     pointerEvents: 'none',
-                    userSelect: 'none'
+                    userSelect: 'none',
+                    WebkitTransform: 'translateZ(0)' // Fix for mobile flickering
                 }}>
                     {imgUrl ? (
                         <img
@@ -186,7 +184,11 @@ const MobileShowcase = () => {
                 </Reveal>
 
                 <div style={{ height: '100%', width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
-                    <Canvas dpr={[1, 2]} camera={{ position: cameraPosition, fov: 45 }}>
+                    <Canvas
+                        dpr={isMobile ? 1 : [1, 2]}
+                        camera={{ position: cameraPosition, fov: 45 }}
+                        gl={{ powerPreference: "default", alpha: true, antialias: false }}
+                    >
                         <ambientLight intensity={0.7} />
                         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
 
@@ -236,13 +238,16 @@ const MobileShowcase = () => {
                             </group>
                         </PresentationControls>
 
-                        <ContactShadows
-                            position={[0, -2.5, 0]}
-                            opacity={0.7}
-                            scale={20}
-                            blur={2}
-                            far={4.5}
-                        />
+                        {!isMobile && (
+                            <ContactShadows
+                                position={[0, -2.5, 0]}
+                                opacity={0.7}
+                                scale={20}
+                                blur={2}
+                                far={4.5}
+                                resolution={512}
+                            />
+                        )}
                     </Canvas>
                 </div>
 

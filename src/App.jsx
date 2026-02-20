@@ -46,7 +46,6 @@ function App() {
       <ScrollProgress />
       <CustomCursor />
       <ThemeToggle />
-      <Marquee text="OPEN TO WORK" top="5rem" rotate={-2} bgColor="var(--color-primary)" />
       <main style={{ padding: '0', maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
         <Hero />
         <About />

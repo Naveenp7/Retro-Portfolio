@@ -1,33 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { User, Cpu, Briefcase, Zap, Mail, Home } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const NAV_LINKS = [
-    { label: 'ABOUT', id: 'about', icon: <User size={20} /> },
-    { label: 'SKILLS', id: 'skills', icon: <Cpu size={20} /> },
-    { label: 'WORK', id: 'projects', icon: <Briefcase size={20} /> },
-    { label: 'LAB', id: 'experience', icon: <Zap size={20} /> },
-    { label: 'CONTACT', id: 'contact', icon: <Mail size={20} /> },
+    { label: 'ABOUT', id: 'about' },
+    { label: 'SKILLS', id: 'skills' },
+    { label: 'WORK', id: 'projects' },
+    { label: 'LAB', id: 'experience' },
+    { label: 'CONTACT', id: 'contact' },
 ];
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
-    const [activeSection, setActiveSection] = useState('home');
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
-
-            // simple active section detection
-            const sections = ['about', 'skills', 'projects', 'experience', 'contact'];
-            let current = 'home';
-            for (const section of sections) {
-                const element = document.getElementById(section);
-                if (element && window.scrollY >= (element.offsetTop - 300)) {
-                    current = section;
-                }
-            }
-            setActiveSection(current);
         };
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
@@ -41,9 +28,9 @@ const Navbar = () => {
 
     return (
         <>
-            {/* ================= DESKTOP NAVBAR ================= */}
+            {/* ================= MAIN NAVBAR ================= */}
             <motion.nav
-                className="desktop-nav" // Targeted by CSS
+                className="desktop-nav"
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 transition={{ duration: 0.8, ease: "circOut" }}
@@ -58,7 +45,7 @@ const Navbar = () => {
                     pointerEvents: 'none'
                 }}
             >
-                <div style={{
+                <div className="nav-container" style={{
                     maxWidth: '1200px',
                     margin: '0 auto',
                     display: 'flex',
@@ -69,6 +56,7 @@ const Navbar = () => {
 
                     {/* BRAND */}
                     <motion.div
+                        className="nav-brand"
                         whileHover={{ scale: 1.05 }}
                         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                         style={{
@@ -84,8 +72,8 @@ const Navbar = () => {
                         [NAVEEN_P]
                     </motion.div>
 
-                    {/* DESKTOP LINKS */}
-                    <div style={{
+                    {/* LINKS */}
+                    <div className="nav-links" style={{
                         display: 'flex', gap: '2rem',
                         background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(10px)',
                         padding: '0.5rem 1rem', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px'
@@ -93,6 +81,7 @@ const Navbar = () => {
                         {NAV_LINKS.map((link) => (
                             <div
                                 key={link.id}
+                                className="nav-link-item"
                                 onClick={() => scrollToSection(link.id)}
                                 style={{
                                     cursor: 'pointer',
@@ -135,92 +124,46 @@ const Navbar = () => {
                 </div>
             </motion.nav>
 
-
-            {/* ================= MOBILE FLOATING DOCK ================= */}
-            <motion.div
-                className="mobile-dock" // Targeted by CSS
-                initial={{ y: 100, opacity: 0, x: '-50%' }}
-                animate={{ y: 0, opacity: 1, x: '-50%' }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                style={{
-                    position: 'fixed',
-                    bottom: '2.5rem',
-                    left: '50%',
-                    // transform handled by framer-motion x prop
-                    zIndex: 1000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    padding: '1rem 2rem',
-                    borderRadius: '40px',
-
-                    // LIQUID GLASS EFFECT
-                    background: 'var(--dock-bg)',
-                    backdropFilter: 'var(--dock-blur)',
-                    border: '1px solid var(--dock-border)',
-                    boxShadow: 'var(--dock-shadow)',
-                }}
-            >
-                <motion.div
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    style={{
-                        padding: '0.5rem',
-                        borderRadius: '12px',
-                        background: activeSection === 'home' ? 'var(--color-primary)' : 'transparent',
-                        color: activeSection === 'home' ? '#000' : 'var(--color-text)',
-                        cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}
-                >
-                    <Home size={22} />
-                </motion.div>
-
-                <div style={{ width: '1px', height: '24px', background: 'rgba(255,255,255,0.1)' }} />
-
-                {NAV_LINKS.map((link) => (
-                    <motion.div
-                        key={link.id}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={() => scrollToSection(link.id)}
-                        style={{
-                            padding: '0.5rem',
-                            borderRadius: '12px',
-                            background: activeSection === link.id ? 'var(--color-primary)' : 'transparent',
-                            color: activeSection === link.id ? '#000' : 'var(--color-text)',
-                            cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            position: 'relative'
-                        }}
-                    >
-                        {link.icon}
-                        {activeSection === link.id && (
-                            <motion.div
-                                layoutId="dock-active-dot"
-                                style={{
-                                    position: 'absolute',
-                                    bottom: '-6px',
-                                    width: '4px',
-                                    height: '4px',
-                                    borderRadius: '50%',
-                                    background: 'var(--color-primary)'
-                                }}
-                            />
-                        )}
-                    </motion.div>
-                ))}
-            </motion.div>
-
-
             <style jsx>{`
-                /* Default: Desktop visible, Mobile Dock hidden */
-                .desktop-nav { display: block !important; }
-                .mobile-dock { display: none !important; }
-
                 /* Mobile Breakpoint */
                 @media (max-width: 768px) {
-                    .desktop-nav { display: none !important; }
-                    .mobile-dock { display: flex !important; }
+                    .desktop-nav {
+                        padding: 1rem 0.5rem !important;
+                    }
+                    .nav-container {
+                        justify-content: center !important;
+                    }
+                    .nav-brand, .status-indicator {
+                        display: none !important;
+                    }
+                    .nav-links {
+                        gap: 1rem !important;
+                        padding: 0.5rem 1rem !important;
+                        justify-content: center;
+                        width: auto;
+                        max-width: 100%;
+                        overflow-x: auto;
+                        -ms-overflow-style: none;
+                        scrollbar-width: none;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+                        border-radius: 8px !important;
+                    }
+                    .nav-links::-webkit-scrollbar {
+                        display: none;
+                    }
+                    .nav-link-item {
+                        font-size: 0.75rem !important;
+                        white-space: nowrap;
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .nav-links {
+                        gap: 0.75rem !important;
+                    }
+                    .nav-link-item {
+                        font-size: 0.7rem !important;
+                    }
                 }
             `}</style>
         </>
